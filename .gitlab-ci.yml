@@ -9,14 +9,14 @@ stages:
 
 build:
   tags:
-    - build
+    - gitlab-org
   stage: build
   script:
     - mvn $MAVEN_CLI_OPTS clean install compile
 
 package:
   tags:
-    - package
+    - gitlab-org
   stage: package
   script:
     - mvn $MAVEN_CLI_OPTS clean package -Dmaven.test.skip=true
