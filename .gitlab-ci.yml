@@ -4,10 +4,9 @@ stages:
   - build
   - package
 
-only:
-  - master
-
 build:
+  only:
+    - master
   tags:
     - gitlab-org
   stage: build
@@ -15,6 +14,8 @@ build:
     - mvn $MAVEN_CLI_OPTS clean install compile
 
 package:
+  only:
+    - master
   tags:
     - gitlab-org
   stage: package
