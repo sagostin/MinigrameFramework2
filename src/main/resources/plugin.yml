@@ -1,0 +1,6 @@
+name: CashEvents
+version: 0.0.1
+main: cash.playmc.cashevents.CashEvents
+author: Nyarrth
+description: Events plugin for MCCash
+website: https://playmc.cash
