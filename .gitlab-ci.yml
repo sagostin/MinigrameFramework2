@@ -4,6 +4,9 @@ stages:
   - build
   - package
 
+only:
+  - master
+
 build:
   tags:
     - gitlab-org
