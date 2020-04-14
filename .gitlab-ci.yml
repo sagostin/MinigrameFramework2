@@ -1,12 +1,14 @@
 image: maven:3-jdk-8
 
+variables:
+  MAVEN_CLI_OPTS: "-s ci-settings.xml --batch-mode"
+
 stages:
   - build
   - package
+  - deploy
 
 build:
-  only:
-    - master
   tags:
     - gitlab-org
   stage: build
@@ -14,8 +16,6 @@ build:
     - mvn $MAVEN_CLI_OPTS clean install compile
 
 package:
-  only:
-    - master
   tags:
     - gitlab-org
   stage: package
@@ -25,3 +25,12 @@ package:
     name: "CashEvents"
     paths:
       - target/*.jar
+
+deploy:
+  tags:
+    - gitlab-org
+  stage: deploy
+  script:
+    - mvn $MAVEN_CLI_OPTS deploy -Dmaven.test.skip=true
+  only:
+    - master

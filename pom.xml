@@ -73,5 +73,12 @@
         </dependency>
     </dependencies>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>mccash-snapshots</id>
+            <url>${env.NEXUS_REPO_URL}</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 
 </project>
