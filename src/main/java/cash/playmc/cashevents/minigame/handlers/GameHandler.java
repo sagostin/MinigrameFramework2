@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class GameHandler {
@@ -15,8 +14,8 @@ public class GameHandler {
 
     public static boolean playerIsPlaying(Player player) {
         for (Game game : gameList) {
-            for (Map.Entry<UUID, Arena> arenaEntry : game.getArenas().entrySet()) {
-                for (GamePlayer gamePlayer : arenaEntry.getValue().getPlayers()) {
+            for (Arena arena : game.getArenas()) {
+                for (GamePlayer gamePlayer : arena.getPlayers()) {
                     if (gamePlayer.getUUID() == player.getUniqueId()) {
                         return true;
                     }
@@ -29,10 +28,10 @@ public class GameHandler {
 
     public static UUID getArenaIDFromPlayer(Player player) {
         for (Game game : gameList) {
-            for (Map.Entry<UUID, Arena> arenaEntry : game.getArenas().entrySet()) {
-                for (GamePlayer gamePlayer : arenaEntry.getValue().getPlayers()) {
+            for (Arena arena : game.getArenas()) {
+                for (GamePlayer gamePlayer : arena.getPlayers()) {
                     if (gamePlayer.getUUID() == player.getUniqueId()) {
-                        return arenaEntry.getKey();
+                        return arena.getArenaID();
                     }
                 }
             }
@@ -43,10 +42,10 @@ public class GameHandler {
 
     public static Arena getArenaFromPlayer(Player player) {
         for (Game game : gameList) {
-            for (Map.Entry<UUID, Arena> arenaEntry : game.getArenas().entrySet()) {
-                for (GamePlayer gamePlayer : arenaEntry.getValue().getPlayers()) {
+            for (Arena arena : game.getArenas()) {
+                for (GamePlayer gamePlayer : arena.getPlayers()) {
                     if (gamePlayer.getUUID() == player.getUniqueId()) {
-                        return arenaEntry.getValue();
+                        return arena;
                     }
                 }
             }
@@ -57,9 +56,9 @@ public class GameHandler {
 
     public static Arena getArenaFromArenaUUID(UUID arenaID) {
         for (Game game : gameList) {
-            for (Map.Entry<UUID, Arena> arenaEntry : game.getArenas().entrySet()) {
-                if (arenaEntry.getKey() == arenaID) {
-                    return arenaEntry.getValue();
+            for (Arena arena : game.getArenas()) {
+                if (arena.getArenaID() == arenaID) {
+                    return arena;
                 }
             }
         }
@@ -75,6 +74,10 @@ public class GameHandler {
         }
 
         return null;
+    }
+
+    public static List<Game> getGames() {
+        return gameList;
     }
 
     public static void addGame(Game game) {

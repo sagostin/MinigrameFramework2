@@ -4,3 +4,8 @@ main: cash.playmc.cashevents.CashEvents
 author: Nyarrth
 description: Events plugin for MCCash
 website: https://playmc.cash
+commands:
+  joinevent:
+    description: Join an event!
+  leaveevent:
+    description: Leave an event!

@@ -14,9 +14,9 @@ import java.io.IOException;
 
 public class WorldHandler {
 
-    public static YamlConfiguration getConfigFile(String worldName) {
+    public static YamlConfiguration getWorldConfigFile(String gameName, String worldName) {
         File file = new File(
-                CashEvents.getPlugin().getDataFolder() + File.separator + "guilds" + File.separator,
+                CashEvents.getPlugin().getDataFolder() + File.separator + gameName + File.separator,
                 worldName + ".yml");
 
         if (!(file.exists())) {

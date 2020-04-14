@@ -15,7 +15,7 @@ public class FFA implements Listener {
 
     public static void createFFA() {
         Game game = new Game("Last Man Standing");
-        Arena arena = new Arena("world-arena-lastmanstanding-1");
+        Arena arena = new Arena(game, "world-arena-lastmanstanding-1");
         game.addArena(arena);
         GameHandler.addGame(game);
     }

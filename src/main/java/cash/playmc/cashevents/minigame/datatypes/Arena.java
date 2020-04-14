@@ -1,5 +1,7 @@
 package cash.playmc.cashevents.minigame.datatypes;
 
+import cash.playmc.cashevents.minigame.countdowns.CountdownHandler;
+import cash.playmc.cashevents.minigame.countdowns.StartCountdown;
 import cash.playmc.cashevents.minigame.customevents.ArenaEndEvent;
 import cash.playmc.cashevents.minigame.customevents.ArenaStartEvent;
 import cash.playmc.cashevents.minigame.enums.ArenaState;
@@ -20,6 +22,23 @@ public class Arena {
     private int minPlayers;
     private int maxPlayers;
     private String author;
+    private String worldNameFormatted;
+    private UUID arenaID;
+
+    public Arena(Game game, String worldName) {
+        players = new ArrayList<>();
+        this.worldName = worldName;
+        this.arenaID = UUID.randomUUID();
+
+        YamlConfiguration config = WorldHandler.getWorldConfigFile(game.getGameName(), worldName);
+        this.worldNameFormatted = config.getString("worldname");
+        author = config.getString("author");
+        minPlayers = config.getInt("minplayers");
+        maxPlayers = config.getInt("maxplayers");
+
+        WorldHandler.loadSlimeWorld(worldName);
+    }
+
     private String worldName;
 
     /*
@@ -36,16 +55,12 @@ public class Arena {
 
      */
 
-    public Arena(String worldName) {
-        players = new ArrayList<>();
+    public String getWorldName() {
+        return worldName;
+    }
 
-        YamlConfiguration config = WorldHandler.getConfigFile(worldName);
-        this.worldName = config.getString("worldname");
-        author = config.getString("author");
-        minPlayers = config.getInt("minplayers");
-        maxPlayers = config.getInt("maxplayers");
-
-        WorldHandler.loadSlimeWorld(worldName);
+    public UUID getArenaID() {
+        return arenaID;
     }
 
     public List<GamePlayer> getPlayers() {
@@ -82,8 +97,8 @@ public class Arena {
         return author;
     }
 
-    public String getWorldName() {
-        return worldName;
+    public String getWorldNameFormatted() {
+        return worldNameFormatted;
     }
 
     public void end() {
@@ -104,5 +119,16 @@ public class Arena {
 
     public void addPlayer(Player player) {
         players.add(new GamePlayer(player.getUniqueId()));
+
+        CountdownHandler.start(new StartCountdown(), this, 10);
+    }
+
+    public void removePlayer(Player player) {
+        for (GamePlayer gamePlayer : players) {
+            if (gamePlayer.getUUID() == player.getUniqueId()) {
+                players.remove(gamePlayer);
+                break;
+            }
+        }
     }
 }
