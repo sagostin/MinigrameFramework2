@@ -1,12 +1,27 @@
 package cash.playmc.cashevents.minigame.datatypes;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.bukkit.entity.Player;
+
+import java.util.*;
 
 public class Game {
     private String gameName;
-    private List<Arena> arenaList;
+    private HashMap<UUID, Arena> arenaHashMap;
     private List<String> worldNames;
+
+    public Game(String gameName) {
+        this.gameName = gameName;
+        this.arenaHashMap = new HashMap<>();
+        this.worldNames = new ArrayList<>();
+    }
+
+    public String getGameName() {
+        return gameName;
+    }
+
+    public HashMap<UUID, Arena> getArenaHashMap() {
+        return arenaHashMap;
+    }
 
     /*
     Game Datatype:
@@ -19,26 +34,34 @@ public class Game {
 
      */
 
-    public Game(String gameName) {
-        this.gameName = gameName;
-        this.arenaList = new ArrayList<>();
-        this.worldNames = new ArrayList<>();
+    public List<String> getWorldNames() {
+        return worldNames;
     }
 
     public void addWorld(String worldName) {
         worldNames.add(worldName);
     }
 
-    public void createArena(String worldName) {
-
+    public void addArena(Arena arena) {
+        arenaHashMap.put(UUID.randomUUID(), arena);
     }
 
-    public void removeArena(Arena arena) {
-
+    public void removeArena(UUID uuid) {
+        if (arenaHashMap.containsKey(uuid)) {
+            arenaHashMap.remove(uuid);
+        }
     }
 
-    public List<Arena> getArenas() {
-        return arenaList;
+    public HashMap<UUID, Arena> getArenas() {
+        return arenaHashMap;
+    }
+
+    public void addPlayerToBestArena(Player player) {
+        for (Map.Entry<UUID, Arena> arenaEntry : getArenas().entrySet()) {
+            Arena arena = arenaEntry.getValue();
+
+            //calculate the best arena based on state && min/max players && current players
+        }
     }
 
 }

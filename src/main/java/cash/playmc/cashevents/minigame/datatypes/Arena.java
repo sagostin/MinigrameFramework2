@@ -1,5 +1,13 @@
 package cash.playmc.cashevents.minigame.datatypes;
 
+import cash.playmc.cashevents.minigame.customevents.ArenaEndEvent;
+import cash.playmc.cashevents.minigame.customevents.ArenaStartEvent;
+import cash.playmc.cashevents.minigame.enums.ArenaState;
+import cash.playmc.cashevents.minigame.handlers.WorldHandler;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -7,6 +15,12 @@ import java.util.UUID;
 public class Arena {
 
     private List<GamePlayer> players;
+    private ArenaState arenaState = ArenaState.WAITING;
+
+    private int minPlayers;
+    private int maxPlayers;
+    private String author;
+    private String worldName;
 
     /*
 
@@ -24,6 +38,14 @@ public class Arena {
 
     public Arena(String worldName) {
         players = new ArrayList<>();
+
+        YamlConfiguration config = WorldHandler.getConfigFile(worldName);
+        this.worldName = config.getString("worldname");
+        author = config.getString("author");
+        minPlayers = config.getInt("minplayers");
+        maxPlayers = config.getInt("maxplayers");
+
+        WorldHandler.loadSlimeWorld(worldName);
     }
 
     public List<GamePlayer> getPlayers() {
@@ -37,5 +59,50 @@ public class Arena {
             }
         }
         return null;
+    }
+
+    public void start() {
+        ArenaStartEvent event = new ArenaStartEvent(this);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+    }
+
+    public ArenaState getArenaState() {
+        return arenaState;
+    }
+
+    public int getMinPlayers() {
+        return minPlayers;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getWorldName() {
+        return worldName;
+    }
+
+    public void end() {
+        ArenaEndEvent event = new ArenaEndEvent(this);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+    }
+
+    public List<GamePlayer> getPlayersByMode(GamePlayer.Mode mode) {
+        List<GamePlayer> players = new ArrayList<>();
+        for (GamePlayer gamePlayer : this.players) {
+            if (gamePlayer.getMode() == mode) {
+                players.add(gamePlayer);
+            }
+        }
+
+        return players;
+    }
+
+    public void addPlayer(Player player) {
+        players.add(new GamePlayer(player.getUniqueId()));
     }
 }
