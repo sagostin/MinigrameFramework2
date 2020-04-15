@@ -1,6 +1,7 @@
 package cash.playmc.cashevents.minigame.handlers;
 
 import cash.playmc.cashevents.CashEvents;
+import cash.playmc.cashevents.minigame.datatypes.Arena;
 import com.grinderwolf.swm.api.exceptions.CorruptedWorldException;
 import com.grinderwolf.swm.api.exceptions.NewerFormatException;
 import com.grinderwolf.swm.api.exceptions.UnknownWorldException;
@@ -36,7 +37,7 @@ public class WorldHandler {
         return YamlConfiguration.loadConfiguration(file);
     }
 
-    public static void loadSlimeWorld(String worldName) {
+    public static SlimeWorld loadSlimeWorld(String slimeWorld, Arena uuid) {
         SlimeLoader slimeLoader = CashEvents.getSlimePlugin().getLoader("file");
 
         SlimePropertyMap propMap = new SlimePropertyMap();
@@ -52,12 +53,15 @@ public class WorldHandler {
 
         try {
             // Note that this method should be called asynchronously
-            SlimeWorld world = CashEvents.getSlimePlugin().loadWorld(slimeLoader, worldName, true, propMap);
+            SlimeWorld world = CashEvents.getSlimePlugin().loadWorld(slimeLoader, slimeWorld, true, propMap);
+            //world.clone
 
             // This method must be called synchronously
             CashEvents.getSlimePlugin().generateWorld(world);
         } catch (UnknownWorldException | IOException | CorruptedWorldException | NewerFormatException | WorldInUseException ex) {
             ex.printStackTrace();
         }
+
+        return null;
     }
 }
