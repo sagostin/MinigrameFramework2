@@ -3,8 +3,6 @@ package cash.playmc.cashevents.commands;
 
 import cash.playmc.cashevents.handler.EventsHandler;
 import cash.playmc.cashevents.minigame.handlers.GameHandler;
-import cash.playmc.cashevents.utils.InventoryStorageUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -28,15 +26,8 @@ public class JoinEventCommand implements CommandExecutor {
             return true;
         }
 
-        InventoryStorageUtil.$().saveInventory(player);
-        player.getInventory().clear();
-        player.updateInventory();
-
         EventsHandler.selectRandomGame();
-
         EventsHandler.getGame().getArenas().get(0).addPlayer(player);
-
-        Bukkit.broadcastMessage(GameHandler.getArenaFromPlayer(player).getArenaID().toString());
 
         return true;
     }

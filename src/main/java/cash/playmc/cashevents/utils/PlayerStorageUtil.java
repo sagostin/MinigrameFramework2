@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.Builder.Default;
 import org.apache.commons.lang.Validate;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -21,23 +22,23 @@ import java.util.UUID;
  * You can use this simple class to save and restore players' inventories.
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class InventoryStorageUtil {
+public class PlayerStorageUtil {
 
     /**
      * The instance of this singleton
      */
-    private static final InventoryStorageUtil instance = new InventoryStorageUtil();
+    private static final PlayerStorageUtil instance = new PlayerStorageUtil();
     /**
      * Stored inventories by player name
      */
-    private final Map<UUID, StoredInventory> inventories = new HashMap<>();
+    private final Map<UUID, StoredData> inventories = new HashMap<>();
 
     /**
      * Get the instance of this inventory storage.
      *
-     * @return the {@link InventoryStorageUtil} instance
+     * @return the {@link PlayerStorageUtil} instance
      */
-    public static final InventoryStorageUtil $() {
+    public static final PlayerStorageUtil $() {
         return instance;
     }
 
@@ -47,7 +48,7 @@ public class InventoryStorageUtil {
      * @param player the player
      */
     public final void saveExperience(Player player) {
-        inventories.put(player.getUniqueId(), StoredInventory.builder().justExperience(true).exp(player.getExp()).lvl(player.getLevel()).totalXp(player.getTotalExperience()).build());
+        inventories.put(player.getUniqueId(), StoredData.builder().justExperience(true).exp(player.getExp()).lvl(player.getLevel()).totalXp(player.getTotalExperience()).build());
     }
 
     /**
@@ -57,7 +58,7 @@ public class InventoryStorageUtil {
      * @throws IllegalArgumentException error if player has no stored inventory
      */
     public final void restoreExperience(Player player) {
-        final StoredInventory s = getStored(player);
+        final StoredData s = getStored(player);
         Validate.isTrue(s != null, "Player " + player.getName() + " does not have a stored inventory!");
 
         player.setTotalExperience(s.getTotalXp());
@@ -71,7 +72,7 @@ public class InventoryStorageUtil {
      * @param player the player
      */
     public final void saveInventory(Player player) {
-        final StoredInventory s = StoredInventory.builder()
+        final StoredData s = StoredData.builder()
 
                 .gameMode(player.getGameMode())
 
@@ -79,6 +80,8 @@ public class InventoryStorageUtil {
                 .content(player.getInventory().getContents())
 
                 .healthScaled(player.isHealthScaled())
+                .maxHealth(player.getMaxHealth())
+                .health(player.getHealth())
 
                 .remainingAir(player.getRemainingAir())
                 .maximumAir(player.getMaximumAir())
@@ -98,6 +101,8 @@ public class InventoryStorageUtil {
 
                 .potionEffects(player.getActivePotionEffects())
 
+                .previousLocation(player.getLocation().clone())
+
                 .build();
 
         inventories.put(player.getUniqueId(), s);
@@ -110,7 +115,7 @@ public class InventoryStorageUtil {
      * @throws IllegalArgumentException error if player has no stored inventory
      */
     public final void restore(Player player) {
-        final StoredInventory s = getStored(player);
+        final StoredData s = getStored(player);
         Validate.isTrue(s != null, "Player " + player.getName() + " does not have a stored inventory!");
 
         player.setTotalExperience(s.getTotalXp());
@@ -141,6 +146,8 @@ public class InventoryStorageUtil {
         player.setFlySpeed(s.getFlySpeed());
         player.setWalkSpeed(s.getWalkSpeed());
 
+        player.teleport(s.getPreviousLocation());
+
         // Potions
         for (final PotionEffect ef : player.getActivePotionEffects())
             player.removePotionEffect(ef.getType());
@@ -162,7 +169,7 @@ public class InventoryStorageUtil {
      */
     public final boolean removeStored(Player player) {
         if (hasStored(player)) {
-            inventories.remove(player.getName());
+            inventories.remove(player.getUniqueId());
 
             return true;
         }
@@ -181,8 +188,8 @@ public class InventoryStorageUtil {
     }
 
     // Return the stored inventory data for player, or null
-    private final StoredInventory getStored(Player pl) {
-        return inventories.get(pl.getName());
+    private final StoredData getStored(Player pl) {
+        return inventories.get(pl.getUniqueId());
     }
 }
 
@@ -192,7 +199,7 @@ public class InventoryStorageUtil {
 @Builder
 @Getter(AccessLevel.PROTECTED)
 @Setter
-class StoredInventory {
+class StoredData {
 
     /**
      * Do these data only store player's experience?
@@ -225,6 +232,7 @@ class StoredInventory {
 
     private float flySpeed;
     private float walkSpeed;
+    private Location previousLocation;
 
     private Collection<PotionEffect> potionEffects;
 }

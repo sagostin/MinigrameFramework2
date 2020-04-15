@@ -3,6 +3,7 @@ package cash.playmc.cashevents.minigame.datatypes;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,17 +26,6 @@ public class Game {
         return arenaList;
     }
 
-    /*
-    Game Datatype:
-
-    You can use this to define games.
-    Example: FFA, TDM, etc.
-
-    In here you will be able to check which Arenas are running etc.
-    You can stop all running arenas, or view their state.
-
-     */
-
     public List<String> getWorldNames() {
         return worldNames;
     }
@@ -49,10 +39,11 @@ public class Game {
     }
 
     public void removeArena(UUID uuid) {
-        for (Arena arena : getArenas()) {
-            if (arena.getArenaID() == uuid) {
-                arena.end();
-                getArenas().remove(uuid);
+        Iterator<Arena> arenaIterator = arenaList.iterator();
+        while (arenaIterator.hasNext()) {
+            if (arenaIterator.next().getArenaID() == uuid) {
+                arenaIterator.remove();
+                break;
             }
         }
     }

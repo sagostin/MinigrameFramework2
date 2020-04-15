@@ -2,7 +2,7 @@ package cash.playmc.cashevents.commands;
 
 
 import cash.playmc.cashevents.minigame.handlers.GameHandler;
-import cash.playmc.cashevents.utils.InventoryStorageUtil;
+import cash.playmc.cashevents.utils.PlayerStorageUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -34,7 +34,7 @@ public class LeaveEventCommand implements CommandExecutor {
 
         GameHandler.getArenaFromPlayer(player).removePlayer(player);
 
-        InventoryStorageUtil.$().restore(player);
+        PlayerStorageUtil.$().restore(player);
         player.updateInventory();
 
         return true;

@@ -7,6 +7,8 @@ import com.grinderwolf.swm.api.exceptions.UnknownWorldException;
 import com.grinderwolf.swm.api.exceptions.WorldInUseException;
 import com.grinderwolf.swm.api.loaders.SlimeLoader;
 import com.grinderwolf.swm.api.world.SlimeWorld;
+import com.grinderwolf.swm.api.world.properties.SlimeProperties;
+import com.grinderwolf.swm.api.world.properties.SlimePropertyMap;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -22,8 +24,8 @@ public class WorldHandler {
         if (!(file.exists())) {
             try {
                 YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-                configuration.set("worldname", worldName);
-                configuration.set("worldauthor", worldName);
+                configuration.set("mapname", worldName);
+                configuration.set("author", worldName);
                 configuration.set("minplayers", 2);
                 configuration.set("maxplayers", 16);
                 configuration.save(file);
@@ -36,20 +38,21 @@ public class WorldHandler {
 
     public static void loadSlimeWorld(String worldName) {
         SlimeLoader slimeLoader = CashEvents.getSlimePlugin().getLoader("file");
-        SlimeWorld.SlimeProperties props = SlimeWorld.SlimeProperties.builder()
-                .difficulty(0)
-                .allowAnimals(false)
-                .allowMonsters(false)
-                .spawnX(0)
-                .spawnY(50)
-                .spawnZ(0)
-                .pvp(true)
-                .readOnly(true)
-                .build();
+
+        SlimePropertyMap propMap = new SlimePropertyMap();
+        propMap.setString(SlimeProperties.ENVIRONMENT, "NORMAL");
+        propMap.setString(SlimeProperties.WORLD_TYPE, "DEFAULT");
+        propMap.setString(SlimeProperties.DIFFICULTY, "PEACEFUL");
+        propMap.setBoolean(SlimeProperties.ALLOW_ANIMALS, false);
+        propMap.setBoolean(SlimeProperties.ALLOW_MONSTERS, false);
+        propMap.setBoolean(SlimeProperties.PVP, true);
+        propMap.setInt(SlimeProperties.SPAWN_Y, 65);
+        propMap.setInt(SlimeProperties.SPAWN_X, 0);
+        propMap.setInt(SlimeProperties.SPAWN_Z, 0);
 
         try {
             // Note that this method should be called asynchronously
-            SlimeWorld world = CashEvents.getSlimePlugin().loadWorld(slimeLoader, worldName, props);
+            SlimeWorld world = CashEvents.getSlimePlugin().loadWorld(slimeLoader, worldName, true, propMap);
 
             // This method must be called synchronously
             CashEvents.getSlimePlugin().generateWorld(world);

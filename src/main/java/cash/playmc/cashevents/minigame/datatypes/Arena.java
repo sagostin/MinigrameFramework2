@@ -1,12 +1,17 @@
 package cash.playmc.cashevents.minigame.datatypes;
 
 import cash.playmc.cashevents.minigame.countdowns.CountdownHandler;
+import cash.playmc.cashevents.minigame.countdowns.EndCountdown;
 import cash.playmc.cashevents.minigame.countdowns.StartCountdown;
 import cash.playmc.cashevents.minigame.customevents.ArenaEndEvent;
+import cash.playmc.cashevents.minigame.customevents.ArenaJoinEvent;
+import cash.playmc.cashevents.minigame.customevents.ArenaLeaveEvent;
 import cash.playmc.cashevents.minigame.customevents.ArenaStartEvent;
 import cash.playmc.cashevents.minigame.enums.ArenaState;
 import cash.playmc.cashevents.minigame.handlers.WorldHandler;
+import cash.playmc.cashevents.utils.PlayerStorageUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -22,16 +27,18 @@ public class Arena {
     private int minPlayers;
     private int maxPlayers;
     private String author;
-    private String worldNameFormatted;
+    private String mapName;
     private UUID arenaID;
+    private Game game;
 
     public Arena(Game game, String worldName) {
         players = new ArrayList<>();
         this.worldName = worldName;
         this.arenaID = UUID.randomUUID();
+        this.game = game;
 
         YamlConfiguration config = WorldHandler.getWorldConfigFile(game.getGameName(), worldName);
-        this.worldNameFormatted = config.getString("worldname");
+        this.mapName = config.getString("mapname");
         author = config.getString("author");
         minPlayers = config.getInt("minplayers");
         maxPlayers = config.getInt("maxplayers");
@@ -39,21 +46,11 @@ public class Arena {
         WorldHandler.loadSlimeWorld(worldName);
     }
 
+    public Game getGame() {
+        return game;
+    }
+
     private String worldName;
-
-    /*
-
-    Arena Datatype:
-
-    Arenas are the individual worlds/"arenas" that games will take place in.
-    Games will be able to create more arenas by creating multiple copies of worlds.
-    Those worlds will have configuration files attached to them (Min players, Arena name, Arena Author, etc.)
-    It will also include spawns, etc.
-    When creating arena, you need to specify;
-    - Game
-    - WorldName (config files names will be associated with the world name)
-
-     */
 
     public String getWorldName() {
         return worldName;
@@ -79,6 +76,7 @@ public class Arena {
     public void start() {
         ArenaStartEvent event = new ArenaStartEvent(this);
         Bukkit.getServer().getPluginManager().callEvent(event);
+        setArenaState(ArenaState.INGAME);
     }
 
     public ArenaState getArenaState() {
@@ -97,13 +95,17 @@ public class Arena {
         return author;
     }
 
-    public String getWorldNameFormatted() {
-        return worldNameFormatted;
+    public String getMapName() {
+        return mapName;
     }
 
     public void end() {
         ArenaEndEvent event = new ArenaEndEvent(this);
         Bukkit.getServer().getPluginManager().callEvent(event);
+
+        if (arenaState != ArenaState.ENDING) {
+            CountdownHandler.start(new EndCountdown(), this, 10);
+        }
     }
 
     public List<GamePlayer> getPlayersByMode(GamePlayer.Mode mode) {
@@ -117,18 +119,60 @@ public class Arena {
         return players;
     }
 
+    public void setArenaState(ArenaState arenaState) {
+        this.arenaState = arenaState;
+    }
+
     public void addPlayer(Player player) {
         players.add(new GamePlayer(player.getUniqueId()));
 
-        CountdownHandler.start(new StartCountdown(), this, 10);
+        PlayerStorageUtil.$().saveInventory(player);
+        player.getInventory().clear();
+        player.updateInventory();
+
+        ArenaJoinEvent event = new ArenaJoinEvent(this, player);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+
+        for (GamePlayer gamePlayer : players) {
+            gamePlayer.getPlayer().sendMessage(ChatColor.YELLOW + player.getName() + " has joined the event! " +
+                    ChatColor.GRAY + "(" + ChatColor.WHITE + players.size() + ChatColor.DARK_GRAY + "/" +
+                    ChatColor.WHITE + maxPlayers + ChatColor.GRAY + ")");
+        }
+
+        if (players.size() >= minPlayers && arenaState != ArenaState.STARTING) {
+            arenaState = ArenaState.STARTING;
+            CountdownHandler.start(new StartCountdown(), this, 10);
+        }
     }
 
     public void removePlayer(Player player) {
         for (GamePlayer gamePlayer : players) {
             if (gamePlayer.getUUID() == player.getUniqueId()) {
                 players.remove(gamePlayer);
+
+                PlayerStorageUtil.$().restore(player);
+
+                ArenaLeaveEvent event = new ArenaLeaveEvent(this, player);
+                Bukkit.getServer().getPluginManager().callEvent(event);
                 break;
             }
         }
+
+        if (arenaState != ArenaState.ENDING) {
+            for (GamePlayer gamePlayer : players) {
+                gamePlayer.getPlayer().sendMessage(ChatColor.YELLOW + player.getName() + " has left the event! " +
+                        ChatColor.GRAY + "(" + ChatColor.WHITE + (players.size()) + ChatColor.DARK_GRAY + "/" +
+                        ChatColor.WHITE + maxPlayers + ChatColor.GRAY + ")");
+            }
+        }
+
+        if (players.size() <= 1) {
+            for (GamePlayer gamePlayer : players) {
+                gamePlayer.getPlayer().sendMessage(ChatColor.RED + "Not enough players to continue the event!");
+            }
+            end();
+        }
+
+
     }
 }
