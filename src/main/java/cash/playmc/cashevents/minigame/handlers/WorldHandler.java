@@ -2,10 +2,8 @@ package cash.playmc.cashevents.minigame.handlers;
 
 import cash.playmc.cashevents.CashEvents;
 import cash.playmc.cashevents.minigame.datatypes.Arena;
-import com.grinderwolf.swm.api.exceptions.CorruptedWorldException;
-import com.grinderwolf.swm.api.exceptions.NewerFormatException;
-import com.grinderwolf.swm.api.exceptions.UnknownWorldException;
-import com.grinderwolf.swm.api.exceptions.WorldInUseException;
+import cash.playmc.cashevents.minigame.datatypes.Game;
+import com.grinderwolf.swm.api.exceptions.*;
 import com.grinderwolf.swm.api.loaders.SlimeLoader;
 import com.grinderwolf.swm.api.world.SlimeWorld;
 import com.grinderwolf.swm.api.world.properties.SlimeProperties;
@@ -14,8 +12,43 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class WorldHandler {
+
+    private static HashMap<String, List<SlimeWorld>> slimeWorlds = new HashMap<>();
+
+    public static void loadWorldsForGame(Game game) {
+        List<SlimeWorld> worlds = new ArrayList<>();
+        for (String worldName : game.getWorldNames()) {
+            worlds.add(loadSlimeWorld(worldName));
+        }
+
+        slimeWorlds.put(game.getGameName(), worlds);
+    }
+
+    public static void loadWorldClone(Arena arena) {
+        for (Map.Entry<String, List<SlimeWorld>> gameWorldMaster : slimeWorlds.entrySet()) {
+            if (gameWorldMaster.getKey().equalsIgnoreCase(arena.getGame().getGameName())) {
+                for (SlimeWorld slimeWorld : gameWorldMaster.getValue()) {
+                    if (slimeWorld.getName().equalsIgnoreCase(arena.getWorldName())) {
+                        try {
+                            // Note that this method should be called asynchronously
+                            SlimeWorld world = slimeWorld.clone(arena.getArenaID().toString(), null);
+                            // This method must be called synchronously
+                            CashEvents.getSlimePlugin().generateWorld(world);
+                        } catch (IOException | WorldAlreadyExistsException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
 
     public static YamlConfiguration getWorldConfigFile(String gameName, String worldName) {
         File file = new File(
@@ -37,7 +70,7 @@ public class WorldHandler {
         return YamlConfiguration.loadConfiguration(file);
     }
 
-    public static SlimeWorld loadSlimeWorld(String slimeWorld, Arena uuid) {
+    private static SlimeWorld loadSlimeWorld(String slimeWorld) {
         SlimeLoader slimeLoader = CashEvents.getSlimePlugin().getLoader("file");
 
         SlimePropertyMap propMap = new SlimePropertyMap();
@@ -51,10 +84,11 @@ public class WorldHandler {
         propMap.setInt(SlimeProperties.SPAWN_X, 0);
         propMap.setInt(SlimeProperties.SPAWN_Z, 0);
 
+        SlimeWorld world = null;
+
         try {
             // Note that this method should be called asynchronously
-            SlimeWorld world = CashEvents.getSlimePlugin().loadWorld(slimeLoader, slimeWorld, true, propMap);
-            //world.clone
+            world = CashEvents.getSlimePlugin().loadWorld(slimeLoader, slimeWorld, true, propMap);
 
             // This method must be called synchronously
             CashEvents.getSlimePlugin().generateWorld(world);
@@ -62,6 +96,6 @@ public class WorldHandler {
             ex.printStackTrace();
         }
 
-        return null;
+        return world;
     }
 }

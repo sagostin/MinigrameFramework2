@@ -1,5 +1,6 @@
 package cash.playmc.cashevents.minigame.countdowns;
 
+import cash.playmc.cashevents.CashEvents;
 import cash.playmc.cashevents.minigame.datatypes.GamePlayer;
 import cash.playmc.cashevents.minigame.enums.ArenaState;
 import cash.playmc.cashevents.minigame.handlers.GameHandler;
@@ -25,14 +26,15 @@ public class EndCountdown extends Countdown {
       gamePlayerIterator.remove();
     }
 
-    Bukkit.unloadWorld(arena.getWorldName(), false);
+    Bukkit.getScheduler().scheduleSyncDelayedTask(CashEvents.getPlugin(),
+            () -> Bukkit.unloadWorld(arena.getSlimeWorldName(), false), 20 * 2);
 
     GameHandler.getArenaFromArenaUUID(arena.getArenaID()).getGame().removeArena(arena.getArenaID());
   }
 
   public void tick(int secs) {
     if ((secs % 5 == 0) || (secs < 5)) {
-      for (GamePlayer gamePlayer : arena.getPlayersByMode(GamePlayer.Mode.PLAYER)) {
+      for (GamePlayer gamePlayer : arena.getPlayers()) {
         Player player = gamePlayer.getPlayer();
         player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
 

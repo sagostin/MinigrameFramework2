@@ -2,7 +2,10 @@ package cash.playmc.cashevents.commands;
 
 
 import cash.playmc.cashevents.handler.EventsHandler;
+import cash.playmc.cashevents.minigame.datatypes.Arena;
+import cash.playmc.cashevents.minigame.datatypes.Game;
 import cash.playmc.cashevents.minigame.handlers.GameHandler;
+import cash.playmc.cashevents.minigame.handlers.WorldHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,6 +30,14 @@ public class JoinEventCommand implements CommandExecutor {
         }
 
         EventsHandler.selectRandomGame();
+
+        Game game = EventsHandler.getGame();
+        if (EventsHandler.getGame().getArenas().size() == 0) {
+            Arena arena = new Arena(game, game.getWorldNames().get(0));
+            game.addArena(arena);
+            WorldHandler.loadWorldClone(arena);
+        }
+
         EventsHandler.getGame().getArenas().get(0).addPlayer(player);
 
         return true;

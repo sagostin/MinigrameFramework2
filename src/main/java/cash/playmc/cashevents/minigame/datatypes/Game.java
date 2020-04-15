@@ -48,6 +48,10 @@ public class Game {
         }
     }
 
+    public void addWorldName(String worldName) {
+        worldNames.add(worldName);
+    }
+
     public void addPlayerToBestArena(Player player) {
         //calculate the best arena based on state && min/max players && current players
     }

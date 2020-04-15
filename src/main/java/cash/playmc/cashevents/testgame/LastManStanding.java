@@ -22,9 +22,12 @@ public class LastManStanding implements Listener {
 
     public static void createLMS() {
         Game game = new Game(gameName);
+        game.addWorld("world-arena-lastmanstanding-1");
+        GameHandler.addGame(game);
+        WorldHandler.loadWorldsForGame(game);
+
         Arena arena = new Arena(game, "world-arena-lastmanstanding-1");
         game.addArena(arena);
-        GameHandler.addGame(game);
     }
 
     @EventHandler
@@ -33,7 +36,7 @@ public class LastManStanding implements Listener {
 
         for (GamePlayer gamePlayer : arena.getPlayers()) {
             Player player = gamePlayer.getPlayer();
-            player.teleport(new Location(Bukkit.getWorld(arena.getWorldName()), 0, 65.5, 0));
+            player.teleport(new Location(Bukkit.getWorld(arena.getSlimeWorldName()), 0, 65.5, 0));
         }
     }
 
@@ -42,7 +45,7 @@ public class LastManStanding implements Listener {
         if (e.getArena().getGame().getGameName() == "Last Man Standing") {
             YamlConfiguration yamlConfiguration = WorldHandler.getWorldConfigFile(gameName, e.getArena().getWorldName());
             Location lobby = new Location(
-                    Bukkit.getWorld(e.getArena().getWorldName()),
+                    Bukkit.getWorld(e.getArena().getSlimeWorldName()),
                     yamlConfiguration.getDouble("lobby.x"),
                     yamlConfiguration.getDouble("lobby.y"),
                     yamlConfiguration.getDouble("lobby.z"));

@@ -43,7 +43,7 @@ public class Arena {
         minPlayers = config.getInt("minplayers");
         maxPlayers = config.getInt("maxplayers");
 
-        WorldHandler.loadSlimeWorld(worldName);
+        WorldHandler.loadWorldClone(this);
     }
 
     public Game getGame() {
@@ -172,7 +172,11 @@ public class Arena {
             }
             end();
         }
-
-
     }
+
+    public String getSlimeWorldName() {
+        return arenaID.toString();
+    }
+
+
 }
