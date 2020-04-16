@@ -1,4 +1,4 @@
-package cash.playmc.cashevents.utils;
+package cash.playmc.cashevents.minigame.utils;
 
 import lombok.*;
 import lombok.Builder.Default;

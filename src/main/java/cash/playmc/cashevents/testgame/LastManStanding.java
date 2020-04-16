@@ -1,20 +1,22 @@
 package cash.playmc.cashevents.testgame;
 
+import cash.playmc.cashevents.CashEvents;
 import cash.playmc.cashevents.minigame.customevents.ArenaJoinEvent;
 import cash.playmc.cashevents.minigame.customevents.ArenaStartEvent;
 import cash.playmc.cashevents.minigame.datatypes.Arena;
 import cash.playmc.cashevents.minigame.datatypes.Game;
 import cash.playmc.cashevents.minigame.datatypes.GamePlayer;
-import cash.playmc.cashevents.minigame.enums.ArenaState;
 import cash.playmc.cashevents.minigame.handlers.GameHandler;
 import cash.playmc.cashevents.minigame.handlers.WorldHandler;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.scheduler.BukkitTask;
 
 public class LastManStanding implements Listener {
 
@@ -30,15 +32,7 @@ public class LastManStanding implements Listener {
         game.addArena(arena);
     }
 
-    @EventHandler
-    public void onGameStart(ArenaStartEvent e) {
-        Arena arena = e.getArena();
-
-        for (GamePlayer gamePlayer : arena.getPlayers()) {
-            Player player = gamePlayer.getPlayer();
-            player.teleport(new Location(Bukkit.getWorld(arena.getSlimeWorldName()), 0, 65.5, 0));
-        }
-    }
+    private static BukkitTask fireworks = null;
 
     @EventHandler
     public void onArenaJoin(ArenaJoinEvent e) {
@@ -53,6 +47,27 @@ public class LastManStanding implements Listener {
         }
     }
 
+    private static int fireworksCountMax = 5;
+
+    @EventHandler
+    public void onGameStart(ArenaStartEvent e) {
+        Arena arena = e.getArena();
+
+        arena.getPlayers().forEach(gp -> {
+            Player player = gp.getPlayer();
+            player.teleport(new Location(Bukkit.getWorld(arena.getSlimeWorldName()), 0, 65.5, 0));
+
+            player.sendMessage(ChatColor.GREEN + " ----- $$$ CashEvents $$$ ----- ");
+            player.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD + "Game: " +
+                    ChatColor.YELLOW + arena.getGame().getGameName());
+            player.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD + "Map: " +
+                    ChatColor.YELLOW + arena.getMapName());
+            player.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD + "Map Author: " +
+                    ChatColor.YELLOW + arena.getAuthor());
+            player.sendMessage(ChatColor.GREEN + " ----- $$$ CashEvents $$$ ----- ");
+        });
+    }
+
     @EventHandler
     public void onDeath(EntityDamageByEntityEvent e) {
         if (e.getEntity() instanceof Player && e.getDamager() instanceof Player) {
@@ -62,7 +77,7 @@ public class LastManStanding implements Listener {
             if (GameHandler.playerIsPlaying(player) && GameHandler.playerIsPlaying(damager)) {
                 if (GameHandler.getArenaFromPlayer(player).getArenaID() == GameHandler.getArenaFromPlayer(damager).getArenaID()) {
                     Arena arena = GameHandler.getArenaFromPlayer(player);
-                    if (arena.getArenaState() == ArenaState.INGAME) {
+                    if (arena.getState() == Arena.State.INGAME) {
                         if (e.getDamage() >= player.getHealth()) {
                             e.setCancelled(true);
                             arena.getPlayer(player.getUniqueId()).setMode(GamePlayer.Mode.SPECTATOR);
@@ -70,6 +85,21 @@ public class LastManStanding implements Listener {
 
                         if (arena.getPlayersByMode(GamePlayer.Mode.PLAYER).size() < 2) {
                             GamePlayer winner = arena.getPlayersByMode(GamePlayer.Mode.PLAYER).get(0);
+
+                            arena.getPlayers().forEach(gp ->
+                                    gp.getPlayer().sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD +
+                                            winner.getPlayer().getName() + ChatColor.GREEN + " has won the event!"));
+
+                            fireworks = Bukkit.getScheduler().runTaskTimer(CashEvents.getPlugin(), () -> {
+                                if (fireworksCountMax >= 1) {
+                                    fireworksCountMax--;
+                                } else {
+                                    fireworks.cancel();
+                                }
+                            }, 20, 2 * 20);
+
+                            //TODO give player reward money for event
+
                             Bukkit.broadcastMessage(winner.getPlayer().getName() + " has one " + arena.getGame().getGameName());
                             arena.end();
                         }

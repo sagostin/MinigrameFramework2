@@ -5,6 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 public class PlayerListener implements Listener {
@@ -14,9 +15,17 @@ public class PlayerListener implements Listener {
         Player player = e.getPlayer();
         if (GameHandler.playerIsPlaying(player)) {
             if (e.getCause() == PlayerTeleportEvent.TeleportCause.COMMAND) {
-                player.sendMessage(ChatColor.RED + "You cannot teleport while in an event.");
+                player.sendMessage(ChatColor.RED + "You cannot teleport while in a game.");
                 e.setCancelled(true);
             }
+        }
+    }
+
+    @EventHandler
+    public void onDisconnect(PlayerQuitEvent e) {
+        Player player = e.getPlayer();
+        if (GameHandler.playerIsPlaying(player)) {
+            GameHandler.getArenaFromPlayer(player).removePlayer(player);
         }
     }
 

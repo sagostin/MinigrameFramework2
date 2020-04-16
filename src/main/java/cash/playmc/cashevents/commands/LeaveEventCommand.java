@@ -2,7 +2,7 @@ package cash.playmc.cashevents.commands;
 
 
 import cash.playmc.cashevents.minigame.handlers.GameHandler;
-import cash.playmc.cashevents.utils.PlayerStorageUtil;
+import cash.playmc.cashevents.minigame.utils.PlayerStorageUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

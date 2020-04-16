@@ -6,8 +6,8 @@ import cash.playmc.cashevents.minigame.datatypes.Arena;
 import cash.playmc.cashevents.minigame.datatypes.Game;
 import cash.playmc.cashevents.minigame.handlers.GameHandler;
 import cash.playmc.cashevents.minigame.listeners.PlayerListener;
+import cash.playmc.cashevents.minigame.utils.PlayerStorageUtil;
 import cash.playmc.cashevents.testgame.LastManStanding;
-import co.aikar.commands.BukkitCommandManager;
 import com.grinderwolf.swm.api.SlimePlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
@@ -19,20 +19,20 @@ public class CashEvents extends JavaPlugin implements Listener {
     private static CashEvents plugin;
     private static PluginManager pluginManager;
     private static SlimePlugin slimePlugin;
-    private static BukkitCommandManager commandManager;
-
-    /*
-    - Save player inventory for when they join
-    - Give them their inventory back when the game finished
-    - Add protection against disconnecting etc
-     */
-
 
     @Override
     public void onDisable() {
         for (Game game : GameHandler.getGames()) {
             for (Arena arena : game.getArenas()) {
-                Bukkit.unloadWorld(arena.getWorldName(), true);
+                arena.getPlayers().forEach(gp -> {
+                    PlayerStorageUtil.$().restore(gp.getPlayer());
+                });
+
+                Bukkit.unloadWorld(arena.getSlimeWorldName(), false);
+            }
+
+            for (String masterWorlds : game.getWorldNames()) {
+                Bukkit.unloadWorld(masterWorlds, false);
             }
         }
     }

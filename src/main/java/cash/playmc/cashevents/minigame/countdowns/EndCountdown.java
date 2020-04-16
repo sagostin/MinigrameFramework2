@@ -1,10 +1,10 @@
 package cash.playmc.cashevents.minigame.countdowns;
 
 import cash.playmc.cashevents.CashEvents;
+import cash.playmc.cashevents.minigame.datatypes.Arena;
 import cash.playmc.cashevents.minigame.datatypes.GamePlayer;
-import cash.playmc.cashevents.minigame.enums.ArenaState;
 import cash.playmc.cashevents.minigame.handlers.GameHandler;
-import cash.playmc.cashevents.utils.PlayerStorageUtil;
+import cash.playmc.cashevents.minigame.utils.PlayerStorageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -16,7 +16,7 @@ public class EndCountdown extends Countdown {
 
   @Override
   public void onEnd() {
-    arena.setArenaState(ArenaState.ENDING);
+    arena.setState(Arena.State.ENDING);
 
     Iterator<GamePlayer> gamePlayerIterator = arena.getPlayers().iterator();
     while (gamePlayerIterator.hasNext()) {

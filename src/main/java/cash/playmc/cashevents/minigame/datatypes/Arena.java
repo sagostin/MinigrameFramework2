@@ -7,22 +7,22 @@ import cash.playmc.cashevents.minigame.customevents.ArenaEndEvent;
 import cash.playmc.cashevents.minigame.customevents.ArenaJoinEvent;
 import cash.playmc.cashevents.minigame.customevents.ArenaLeaveEvent;
 import cash.playmc.cashevents.minigame.customevents.ArenaStartEvent;
-import cash.playmc.cashevents.minigame.enums.ArenaState;
 import cash.playmc.cashevents.minigame.handlers.WorldHandler;
-import cash.playmc.cashevents.utils.PlayerStorageUtil;
+import cash.playmc.cashevents.minigame.utils.PlayerStorageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
 public class Arena {
 
     private List<GamePlayer> players;
-    private ArenaState arenaState = ArenaState.WAITING;
+    private State arenaState = State.WAITING;
 
     private int minPlayers;
     private int maxPlayers;
@@ -76,10 +76,10 @@ public class Arena {
     public void start() {
         ArenaStartEvent event = new ArenaStartEvent(this);
         Bukkit.getServer().getPluginManager().callEvent(event);
-        setArenaState(ArenaState.INGAME);
+        setState(Arena.State.INGAME);
     }
 
-    public ArenaState getArenaState() {
+    public Arena.State getState() {
         return arenaState;
     }
 
@@ -99,28 +99,29 @@ public class Arena {
         return mapName;
     }
 
+    public void setState(Arena.State arenaState) {
+        this.arenaState = arenaState;
+    }
+
     public void end() {
         ArenaEndEvent event = new ArenaEndEvent(this);
         Bukkit.getServer().getPluginManager().callEvent(event);
 
-        if (arenaState != ArenaState.ENDING) {
+        if (arenaState != Arena.State.ENDING) {
             CountdownHandler.start(new EndCountdown(), this, 10);
         }
     }
 
     public List<GamePlayer> getPlayersByMode(GamePlayer.Mode mode) {
-        List<GamePlayer> players = new ArrayList<>();
-        for (GamePlayer gamePlayer : this.players) {
-            if (gamePlayer.getMode() == mode) {
-                players.add(gamePlayer);
+        List<GamePlayer> playersByMode = new ArrayList<>();
+        players.forEach(gp -> {
+            if (gp.getMode() == mode) {
+                playersByMode.add(gp);
             }
-        }
 
-        return players;
-    }
+        });
 
-    public void setArenaState(ArenaState arenaState) {
-        this.arenaState = arenaState;
+        return playersByMode;
     }
 
     public void addPlayer(Player player) {
@@ -133,22 +134,22 @@ public class Arena {
         ArenaJoinEvent event = new ArenaJoinEvent(this, player);
         Bukkit.getServer().getPluginManager().callEvent(event);
 
-        for (GamePlayer gamePlayer : players) {
-            gamePlayer.getPlayer().sendMessage(ChatColor.YELLOW + player.getName() + " has joined the event! " +
-                    ChatColor.GRAY + "(" + ChatColor.WHITE + players.size() + ChatColor.DARK_GRAY + "/" +
-                    ChatColor.WHITE + maxPlayers + ChatColor.GRAY + ")");
-        }
+        players.forEach(gp -> gp.getPlayer().sendMessage(ChatColor.YELLOW + player.getName() + " has joined the game! " +
+                ChatColor.GRAY + "(" + ChatColor.WHITE + players.size() + ChatColor.DARK_GRAY + "/" +
+                ChatColor.WHITE + maxPlayers + ChatColor.GRAY + ")"));
 
-        if (players.size() >= minPlayers && arenaState != ArenaState.STARTING) {
-            arenaState = ArenaState.STARTING;
+        if (players.size() >= minPlayers && arenaState != Arena.State.STARTING) {
+            arenaState = Arena.State.STARTING;
             CountdownHandler.start(new StartCountdown(), this, 10);
         }
     }
 
     public void removePlayer(Player player) {
-        for (GamePlayer gamePlayer : players) {
-            if (gamePlayer.getUUID() == player.getUniqueId()) {
-                players.remove(gamePlayer);
+        Iterator<GamePlayer> gamePlayerIterator = players.iterator();
+        while (gamePlayerIterator.hasNext()) {
+            GamePlayer gp = gamePlayerIterator.next();
+            if (gp.getUUID() == player.getUniqueId()) {
+                players.remove(gp);
 
                 PlayerStorageUtil.$().restore(player);
 
@@ -158,19 +159,18 @@ public class Arena {
             }
         }
 
-        if (arenaState != ArenaState.ENDING) {
-            for (GamePlayer gamePlayer : players) {
-                gamePlayer.getPlayer().sendMessage(ChatColor.YELLOW + player.getName() + " has left the event! " +
-                        ChatColor.GRAY + "(" + ChatColor.WHITE + (players.size()) + ChatColor.DARK_GRAY + "/" +
-                        ChatColor.WHITE + maxPlayers + ChatColor.GRAY + ")");
+        if (arenaState != Arena.State.ENDING) {
+            if (players.size() <= 1) {
+                players.forEach(gp -> gp.getPlayer().sendMessage(
+                        ChatColor.RED + "Not enough players to continue the game!"));
+                end();
+            } else {
+                for (GamePlayer gamePlayer : players) {
+                    gamePlayer.getPlayer().sendMessage(ChatColor.YELLOW + player.getName() + " has left the game! " +
+                            ChatColor.GRAY + "(" + ChatColor.WHITE + (players.size()) + ChatColor.DARK_GRAY + "/" +
+                            ChatColor.WHITE + maxPlayers + ChatColor.GRAY + ")");
+                }
             }
-        }
-
-        if (players.size() <= 1) {
-            for (GamePlayer gamePlayer : players) {
-                gamePlayer.getPlayer().sendMessage(ChatColor.RED + "Not enough players to continue the event!");
-            }
-            end();
         }
     }
 
@@ -178,5 +178,7 @@ public class Arena {
         return arenaID.toString();
     }
 
-
+    public enum State {
+        WAITING, STARTING, INGAME, ENDING
+    }
 }
