@@ -9,19 +9,29 @@ import cash.playmc.cashevents.minigame.datatypes.GamePlayer;
 import cash.playmc.cashevents.minigame.handlers.GameHandler;
 import cash.playmc.cashevents.minigame.handlers.WorldHandler;
 import cash.playmc.cashevents.utils.FireworkUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
 public class LastManStanding implements Listener {
 
     private static String gameName = "Last Man Standing";
+
+    /*
+    TODO
+
+    - make players invincible during lobby time
+    - no hunger/damage
+    - no pvp in lobby
+    - disable block breaking
+
+     */
 
     public static void createLMS() {
         Game game = new Game(gameName);
@@ -66,6 +76,14 @@ public class LastManStanding implements Listener {
             player.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD + "Map Author: " +
                     ChatColor.YELLOW + arena.getAuthor());
             player.sendMessage(ChatColor.GREEN + " ----- $$$ CashEvents $$$ ----- ");
+
+            // set inventory & gamemode
+            player.setGameMode(GameMode.SURVIVAL);
+
+            // items simply for testing
+            Inventory inventory = player.getInventory();
+            inventory.addItem(new ItemStack(Material.IRON_SWORD, 1));
+            player.updateInventory();
         });
     }
 
