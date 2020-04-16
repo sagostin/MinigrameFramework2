@@ -1,7 +1,7 @@
 package cash.playmc.cashevents.minigame.countdowns;
 
+import cash.playmc.cashevents.minigame.datatypes.Arena;
 import cash.playmc.cashevents.minigame.datatypes.GamePlayer;
-import cash.playmc.cashevents.minigame.enums.ArenaState;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -13,19 +13,13 @@ public class StartCountdown extends Countdown {
     if (arena.getPlayersByMode(GamePlayer.Mode.PLAYER).size() < arena.getMinPlayers()) {
       for (GamePlayer gamePlayer : this.arena.getPlayers()) {
         gamePlayer.getPlayer().sendMessage(ChatColor.RED + "Unable to start the game... We need more players to join.");
-        arena.setArenaState(ArenaState.WAITING);
       }
+
+      arena.setState(Arena.State.WAITING);
     } else {
       for (GamePlayer gamePlayer : this.arena.getPlayers()) {
         Player player = gamePlayer.getPlayer();
-        player.sendMessage(ChatColor.GREEN + " ----- $$$ CashEvents $$$ ----- ");
-        player.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD + "Game: " +
-                ChatColor.YELLOW + arena.getGame().getGameName());
-        player.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD + "Map: " +
-                ChatColor.YELLOW + arena.getMapName());
-        player.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD + "Map Author: " +
-                ChatColor.YELLOW + arena.getAuthor());
-        player.sendMessage(ChatColor.GREEN + " ----- $$$ CashEvents $$$ ----- ");
+        player.sendTitle(ChatColor.GREEN + "The game has started!", "");
       }
       this.arena.start();
     }
