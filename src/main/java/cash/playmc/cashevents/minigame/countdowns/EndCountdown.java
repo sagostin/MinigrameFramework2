@@ -29,7 +29,7 @@ public class EndCountdown extends Countdown {
     Bukkit.getScheduler().scheduleSyncDelayedTask(CashEvents.getPlugin(),
             () -> Bukkit.unloadWorld(arena.getSlimeWorldName(), false), 20 * 2);
 
-    GameHandler.getArenaFromArenaUUID(arena.getArenaID()).getGame().removeArena(arena.getArenaID());
+    GameHandler.getGameByName(arena.getGame().getGameName()).removeArena(arena.getArenaID());
   }
 
   public void tick(int secs) {

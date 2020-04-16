@@ -108,7 +108,7 @@ public class Arena {
         Bukkit.getServer().getPluginManager().callEvent(event);
 
         if (arenaState != Arena.State.ENDING) {
-            CountdownHandler.start(new EndCountdown(), this, 10);
+            CountdownHandler.start(new EndCountdown(), this, 15);
         }
     }
 
@@ -140,7 +140,7 @@ public class Arena {
 
         if (players.size() >= minPlayers && arenaState != Arena.State.STARTING) {
             arenaState = Arena.State.STARTING;
-            CountdownHandler.start(new StartCountdown(), this, 10);
+            CountdownHandler.start(new StartCountdown(), this, 15);
         }
     }
 

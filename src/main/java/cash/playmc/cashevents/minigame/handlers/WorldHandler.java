@@ -85,13 +85,12 @@ public class WorldHandler {
         propMap.setInt(SlimeProperties.SPAWN_Z, 0);
 
         SlimeWorld world = null;
-
         try {
             // Note that this method should be called asynchronously
             world = CashEvents.getSlimePlugin().loadWorld(slimeLoader, slimeWorld, true, propMap);
 
             // This method must be called synchronously
-            CashEvents.getSlimePlugin().generateWorld(world);
+            //CashEvents.getSlimePlugin().generateWorld(world);
         } catch (UnknownWorldException | IOException | CorruptedWorldException | NewerFormatException | WorldInUseException ex) {
             ex.printStackTrace();
         }

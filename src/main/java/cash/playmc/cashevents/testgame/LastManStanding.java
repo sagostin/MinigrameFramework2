@@ -8,6 +8,7 @@ import cash.playmc.cashevents.minigame.datatypes.Game;
 import cash.playmc.cashevents.minigame.datatypes.GamePlayer;
 import cash.playmc.cashevents.minigame.handlers.GameHandler;
 import cash.playmc.cashevents.minigame.handlers.WorldHandler;
+import cash.playmc.cashevents.utils.FireworkUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -93,14 +94,13 @@ public class LastManStanding implements Listener {
                             fireworks = Bukkit.getScheduler().runTaskTimer(CashEvents.getPlugin(), () -> {
                                 if (fireworksCountMax >= 1) {
                                     fireworksCountMax--;
+                                    FireworkUtil.spawnFirework(winner.getPlayer().getLocation());
                                 } else {
                                     fireworks.cancel();
                                 }
                             }, 20, 2 * 20);
 
                             //TODO give player reward money for event
-
-                            Bukkit.broadcastMessage(winner.getPlayer().getName() + " has one " + arena.getGame().getGameName());
                             arena.end();
                         }
                     }

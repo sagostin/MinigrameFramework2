@@ -1,11 +1,13 @@
 package cash.playmc.cashevents.commands;
 
 
+import cash.playmc.cashevents.CashEvents;
 import cash.playmc.cashevents.handler.EventsHandler;
 import cash.playmc.cashevents.minigame.datatypes.Arena;
 import cash.playmc.cashevents.minigame.datatypes.Game;
 import cash.playmc.cashevents.minigame.handlers.GameHandler;
 import cash.playmc.cashevents.minigame.handlers.WorldHandler;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -32,13 +34,27 @@ public class JoinEventCommand implements CommandExecutor {
         EventsHandler.selectRandomGame();
 
         Game game = EventsHandler.getGame();
+
+        player.sendMessage(ChatColor.GREEN + "Loading Event...");
+
         if (EventsHandler.getGame().getArenas().size() == 0) {
             Arena arena = new Arena(game, game.getWorldNames().get(0));
             game.addArena(arena);
             WorldHandler.loadWorldClone(arena);
-        }
 
-        EventsHandler.getGame().getArenas().get(0).addPlayer(player);
+
+            // todo add this to the auto game finder ?
+            // to make this work for an actual minigame server, it needs to
+            // check if there's already pending arenas being created
+            // if there is, run a method to not create a new one, instead wait and check
+            // back in a few seconds
+            Bukkit.getScheduler().runTaskLater(CashEvents.getPlugin(), () -> {
+                EventsHandler.getGame().getArenas().get(0).addPlayer(player);
+            }, 20 * 5);
+
+        } else {
+            EventsHandler.getGame().getArenas().get(0).addPlayer(player);
+        }
 
         return true;
     }
