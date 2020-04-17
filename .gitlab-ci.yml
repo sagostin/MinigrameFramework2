@@ -6,21 +6,31 @@ variables:
 stages:
   - build
   - package
+  - deploy
 
 build:
   tags:
-    - build
+    - gitlab-org
   stage: build
   script:
     - mvn $MAVEN_CLI_OPTS clean install compile
 
 package:
   tags:
-    - package
+    - gitlab-org
   stage: package
   script:
     - mvn $MAVEN_CLI_OPTS clean package -Dmaven.test.skip=true
   artifacts:
-    name: "CashEvents"
+    name: "Game"
     paths:
       - target/*.jar
+
+deploy:
+  tags:
+    - gitlab-org
+  stage: deploy
+  script:
+    - mvn $MAVEN_CLI_OPTS deploy -Dmaven.test.skip=true
+  only:
+    - master

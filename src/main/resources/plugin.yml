@@ -1,0 +1,6 @@
+name: Game
+version: 0.1.0
+main: cash.playmc.game.Minigame
+author: Nyarrth
+description: GameAPI
+depends: [SlimeWorldManager]
