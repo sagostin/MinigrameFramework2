@@ -1,11 +1,6 @@
-name: CashEvents
-version: 0.0.1
-main: cash.playmc.cashevents.CashEvents
+name: Game
+version: 0.1.0
+main: cash.playmc.game.Minigame
 author: Nyarrth
-description: Events plugin for MCCash
-website: https://playmc.cash
-commands:
-  joinevent:
-    description: Join an event!
-  leaveevent:
-    description: Leave an event!
+description: GameAPI
+depends: [SlimeWorldManager]

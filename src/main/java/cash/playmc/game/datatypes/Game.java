@@ -1,4 +1,4 @@
-package cash.playmc.cashevents.minigame.datatypes;
+package cash.playmc.game.datatypes;
 
 import org.bukkit.entity.Player;
 

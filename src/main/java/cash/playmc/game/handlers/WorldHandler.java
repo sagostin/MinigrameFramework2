@@ -1,8 +1,8 @@
-package cash.playmc.cashevents.minigame.handlers;
+package cash.playmc.game.handlers;
 
-import cash.playmc.cashevents.CashEvents;
-import cash.playmc.cashevents.minigame.datatypes.Arena;
-import cash.playmc.cashevents.minigame.datatypes.Game;
+import cash.playmc.game.Minigame;
+import cash.playmc.game.datatypes.Arena;
+import cash.playmc.game.datatypes.Game;
 import com.grinderwolf.swm.api.exceptions.*;
 import com.grinderwolf.swm.api.loaders.SlimeLoader;
 import com.grinderwolf.swm.api.world.SlimeWorld;
@@ -39,7 +39,7 @@ public class WorldHandler {
                             // Note that this method should be called asynchronously
                             SlimeWorld world = slimeWorld.clone(arena.getArenaID().toString(), null);
                             // This method must be called synchronously
-                            CashEvents.getSlimePlugin().generateWorld(world);
+                            Minigame.getSlimePlugin().generateWorld(world);
                         } catch (IOException | WorldAlreadyExistsException ex) {
                             ex.printStackTrace();
                         }
@@ -52,7 +52,7 @@ public class WorldHandler {
 
     public static YamlConfiguration getWorldConfigFile(String gameName, String worldName) {
         File file = new File(
-                CashEvents.getPlugin().getDataFolder() + File.separator + gameName + File.separator,
+                Minigame.getPlugin().getDataFolder() + File.separator + gameName + File.separator,
                 worldName + ".yml");
 
         if (!(file.exists())) {
@@ -71,7 +71,7 @@ public class WorldHandler {
     }
 
     private static SlimeWorld loadSlimeWorld(String slimeWorld) {
-        SlimeLoader slimeLoader = CashEvents.getSlimePlugin().getLoader("file");
+        SlimeLoader slimeLoader = Minigame.getSlimePlugin().getLoader("file");
 
         SlimePropertyMap propMap = new SlimePropertyMap();
         propMap.setString(SlimeProperties.ENVIRONMENT, "NORMAL");
@@ -87,7 +87,7 @@ public class WorldHandler {
         SlimeWorld world = null;
         try {
             // Note that this method should be called asynchronously
-            world = CashEvents.getSlimePlugin().loadWorld(slimeLoader, slimeWorld, true, propMap);
+            world = Minigame.getSlimePlugin().loadWorld(slimeLoader, slimeWorld, true, propMap);
 
             // This method must be called synchronously
             //CashEvents.getSlimePlugin().generateWorld(world);

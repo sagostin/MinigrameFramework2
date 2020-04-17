@@ -1,10 +1,10 @@
-package cash.playmc.cashevents.minigame.countdowns;
+package cash.playmc.game.countdowns;
 
-import cash.playmc.cashevents.CashEvents;
-import cash.playmc.cashevents.minigame.datatypes.Arena;
-import cash.playmc.cashevents.minigame.datatypes.GamePlayer;
-import cash.playmc.cashevents.minigame.handlers.GameHandler;
-import cash.playmc.cashevents.minigame.utils.PlayerStorageUtil;
+import cash.playmc.game.Minigame;
+import cash.playmc.game.datatypes.Arena;
+import cash.playmc.game.datatypes.GamePlayer;
+import cash.playmc.game.handlers.GameHandler;
+import cash.playmc.game.utils.PlayerStorageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -26,7 +26,7 @@ public class EndCountdown extends Countdown {
       gamePlayerIterator.remove();
     }
 
-    Bukkit.getScheduler().scheduleSyncDelayedTask(CashEvents.getPlugin(),
+    Bukkit.getScheduler().scheduleSyncDelayedTask(Minigame.getPlugin(),
             () -> Bukkit.unloadWorld(arena.getSlimeWorldName(), false), 20 * 2);
 
     GameHandler.getGameByName(arena.getGame().getGameName()).removeArena(arena.getArenaID());

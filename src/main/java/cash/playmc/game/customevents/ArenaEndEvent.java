@@ -1,6 +1,6 @@
-package cash.playmc.cashevents.minigame.customevents;
+package cash.playmc.game.customevents;
 
-import cash.playmc.cashevents.minigame.datatypes.Arena;
+import cash.playmc.game.datatypes.Arena;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 

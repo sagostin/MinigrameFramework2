@@ -1,6 +1,6 @@
-package cash.playmc.cashevents.minigame.countdowns;
+package cash.playmc.game.countdowns;
 
-import cash.playmc.cashevents.minigame.datatypes.Arena;
+import cash.playmc.game.datatypes.Arena;
 
 import java.util.ArrayList;
 import java.util.List;

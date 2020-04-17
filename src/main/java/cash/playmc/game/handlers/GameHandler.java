@@ -1,8 +1,8 @@
-package cash.playmc.cashevents.minigame.handlers;
+package cash.playmc.game.handlers;
 
-import cash.playmc.cashevents.minigame.datatypes.Arena;
-import cash.playmc.cashevents.minigame.datatypes.Game;
-import cash.playmc.cashevents.minigame.datatypes.GamePlayer;
+import cash.playmc.game.datatypes.Arena;
+import cash.playmc.game.datatypes.Game;
+import cash.playmc.game.datatypes.GamePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;

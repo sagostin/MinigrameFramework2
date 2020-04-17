@@ -1,4 +1,4 @@
-package cash.playmc.cashevents.utils;
+package cash.playmc.game.utils;
 
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;

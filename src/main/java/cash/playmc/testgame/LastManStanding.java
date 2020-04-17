@@ -1,14 +1,14 @@
-package cash.playmc.cashevents.testgame;
+package cash.playmc.testgame;
 
-import cash.playmc.cashevents.CashEvents;
-import cash.playmc.cashevents.minigame.customevents.ArenaJoinEvent;
-import cash.playmc.cashevents.minigame.customevents.ArenaStartEvent;
-import cash.playmc.cashevents.minigame.datatypes.Arena;
-import cash.playmc.cashevents.minigame.datatypes.Game;
-import cash.playmc.cashevents.minigame.datatypes.GamePlayer;
-import cash.playmc.cashevents.minigame.handlers.GameHandler;
-import cash.playmc.cashevents.minigame.handlers.WorldHandler;
-import cash.playmc.cashevents.utils.FireworkUtil;
+import cash.playmc.game.Minigame;
+import cash.playmc.game.customevents.ArenaJoinEvent;
+import cash.playmc.game.customevents.ArenaStartEvent;
+import cash.playmc.game.datatypes.Arena;
+import cash.playmc.game.datatypes.Game;
+import cash.playmc.game.datatypes.GamePlayer;
+import cash.playmc.game.handlers.GameHandler;
+import cash.playmc.game.handlers.WorldHandler;
+import cash.playmc.game.utils.FireworkUtil;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -152,7 +152,7 @@ public class LastManStanding implements Listener {
                         gp.getPlayer().sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD +
                                 winner.getPlayer().getName() + ChatColor.GREEN + " has won the event!"));
 
-                fireworks = Bukkit.getScheduler().runTaskTimer(CashEvents.getPlugin(), () -> {
+                fireworks = Bukkit.getScheduler().runTaskTimer(Minigame.getPlugin(), () -> {
                     if (fireworksCountMax >= 1) {
                         fireworksCountMax--;
                         FireworkUtil.spawnFirework(winner.getPlayer().getLocation());

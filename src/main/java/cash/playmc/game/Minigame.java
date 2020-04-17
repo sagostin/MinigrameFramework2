@@ -1,22 +1,20 @@
-package cash.playmc.cashevents;
+package cash.playmc.game;
 
-import cash.playmc.cashevents.commands.JoinEventCommand;
-import cash.playmc.cashevents.commands.LeaveEventCommand;
-import cash.playmc.cashevents.minigame.datatypes.Arena;
-import cash.playmc.cashevents.minigame.datatypes.Game;
-import cash.playmc.cashevents.minigame.handlers.GameHandler;
-import cash.playmc.cashevents.minigame.listeners.PlayerListener;
-import cash.playmc.cashevents.minigame.utils.PlayerStorageUtil;
-import cash.playmc.cashevents.testgame.LastManStanding;
+import cash.playmc.game.datatypes.Arena;
+import cash.playmc.game.datatypes.Game;
+import cash.playmc.game.handlers.GameHandler;
+import cash.playmc.game.listeners.PlayerListener;
+import cash.playmc.game.utils.PlayerStorageUtil;
+import cash.playmc.testgame.LastManStanding;
 import com.grinderwolf.swm.api.SlimePlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class CashEvents extends JavaPlugin implements Listener {
+public class Minigame extends JavaPlugin implements Listener {
 
-    private static CashEvents plugin;
+    private static Minigame plugin;
     private static PluginManager pluginManager;
     private static SlimePlugin slimePlugin;
 
@@ -37,7 +35,7 @@ public class CashEvents extends JavaPlugin implements Listener {
         }
     }
 
-    public static CashEvents getPlugin() {
+    public static Minigame getPlugin() {
         return plugin;
     }
 
@@ -54,9 +52,6 @@ public class CashEvents extends JavaPlugin implements Listener {
 
         pluginManager.registerEvents(new PlayerListener(), this);
         pluginManager.registerEvents(new LastManStanding(), this);
-
-        getCommand("joinevent").setExecutor(new JoinEventCommand());
-        getCommand("leaveevent").setExecutor(new LeaveEventCommand());
 
         LastManStanding.createLMS();
     }

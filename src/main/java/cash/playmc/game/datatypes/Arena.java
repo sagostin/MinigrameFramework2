@@ -1,14 +1,14 @@
-package cash.playmc.cashevents.minigame.datatypes;
+package cash.playmc.game.datatypes;
 
-import cash.playmc.cashevents.minigame.countdowns.CountdownHandler;
-import cash.playmc.cashevents.minigame.countdowns.EndCountdown;
-import cash.playmc.cashevents.minigame.countdowns.StartCountdown;
-import cash.playmc.cashevents.minigame.customevents.ArenaEndEvent;
-import cash.playmc.cashevents.minigame.customevents.ArenaJoinEvent;
-import cash.playmc.cashevents.minigame.customevents.ArenaLeaveEvent;
-import cash.playmc.cashevents.minigame.customevents.ArenaStartEvent;
-import cash.playmc.cashevents.minigame.handlers.WorldHandler;
-import cash.playmc.cashevents.minigame.utils.PlayerStorageUtil;
+import cash.playmc.game.countdowns.CountdownHandler;
+import cash.playmc.game.countdowns.EndCountdown;
+import cash.playmc.game.countdowns.StartCountdown;
+import cash.playmc.game.customevents.ArenaEndEvent;
+import cash.playmc.game.customevents.ArenaJoinEvent;
+import cash.playmc.game.customevents.ArenaLeaveEvent;
+import cash.playmc.game.customevents.ArenaStartEvent;
+import cash.playmc.game.handlers.WorldHandler;
+import cash.playmc.game.utils.PlayerStorageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;

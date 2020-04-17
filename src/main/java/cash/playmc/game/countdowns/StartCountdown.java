@@ -1,7 +1,7 @@
-package cash.playmc.cashevents.minigame.countdowns;
+package cash.playmc.game.countdowns;
 
-import cash.playmc.cashevents.minigame.datatypes.Arena;
-import cash.playmc.cashevents.minigame.datatypes.GamePlayer;
+import cash.playmc.game.datatypes.Arena;
+import cash.playmc.game.datatypes.GamePlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
