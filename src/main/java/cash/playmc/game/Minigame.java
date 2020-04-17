@@ -5,7 +5,6 @@ import cash.playmc.game.datatypes.Game;
 import cash.playmc.game.handlers.GameHandler;
 import cash.playmc.game.listeners.PlayerListener;
 import cash.playmc.game.utils.PlayerStorageUtil;
-import cash.playmc.testgame.LastManStanding;
 import com.grinderwolf.swm.api.SlimePlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
@@ -51,8 +50,5 @@ public class Minigame extends JavaPlugin implements Listener {
         slimePlugin = (SlimePlugin) Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
 
         pluginManager.registerEvents(new PlayerListener(), this);
-        pluginManager.registerEvents(new LastManStanding(), this);
-
-        LastManStanding.createLMS();
     }
 }
