@@ -38,7 +38,7 @@ public class EndCountdown extends Countdown {
         Player player = gamePlayer.getPlayer();
         player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
 
-        player.sendTitle(ChatColor.RED + "Game ending in", ChatColor.DARK_RED + "" + secs);
+        //player.sendTitle(ChatColor.RED + "Game ending in", ChatColor.DARK_RED + "" + secs);
 
         player.sendMessage(ChatColor.RED + "Game ending in " + ChatColor.DARK_RED + secs +
                 ChatColor.RED + (secs > 1 ? " seconds!" : " second!"));

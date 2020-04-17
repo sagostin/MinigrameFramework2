@@ -19,7 +19,7 @@ public class StartCountdown extends Countdown {
     } else {
       for (GamePlayer gamePlayer : this.arena.getPlayers()) {
         Player player = gamePlayer.getPlayer();
-        player.sendTitle(ChatColor.GREEN + "The game has started!", "");
+        player.sendTitle(ChatColor.GREEN + "" + ChatColor.BOLD + "GO!", ChatColor.YELLOW + "The game has started.");
       }
       this.arena.start();
     }
