@@ -79,9 +79,7 @@ public class PlayerListener implements Listener {
                 if (GameHandler.getArenaFromPlayer(player).getState() == Arena.State.STARTING ||
                         GameHandler.getArenaFromPlayer(player).getState() == Arena.State.ENDING ||
                         GameHandler.getArenaFromPlayer(player).getState() == Arena.State.WAITING) {
-                    if (e.getInventory() == player.getInventory()) {
-                        e.setCancelled(true);
-                    }
+                    e.setCancelled(true);
                 }
             }
         }
