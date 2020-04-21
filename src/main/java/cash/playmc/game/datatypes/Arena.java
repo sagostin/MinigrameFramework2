@@ -159,7 +159,7 @@ public class Arena {
             }
         }
 
-        if (arenaState != Arena.State.ENDING) {
+        if (arenaState != Arena.State.ENDING && arenaState != State.STARTING && arenaState != State.WAITING) {
             if (players.size() <= 1) {
                 players.forEach(gp -> gp.getPlayer().sendMessage(
                         ChatColor.RED + "Not enough players to continue the game!"));
