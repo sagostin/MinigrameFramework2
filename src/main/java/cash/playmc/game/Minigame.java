@@ -7,15 +7,23 @@ import cash.playmc.game.listeners.PlayerListener;
 import cash.playmc.game.utils.PlayerStorageUtil;
 import com.grinderwolf.swm.api.SlimePlugin;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.List;
 
 public class Minigame extends JavaPlugin implements Listener {
 
     private static Minigame plugin;
     private static PluginManager pluginManager;
+
     private static SlimePlugin slimePlugin;
+
+    private static FileConfiguration config;
+
+    private static List<String> blockedCommands;
 
     @Override
     public void onDisable() {
@@ -42,6 +50,10 @@ public class Minigame extends JavaPlugin implements Listener {
         return slimePlugin;
     }
 
+    public static List<String> getBlockedCommands() {
+        return blockedCommands;
+    }
+
     @Override
     public void onEnable() {
         plugin = this;
@@ -49,6 +61,13 @@ public class Minigame extends JavaPlugin implements Listener {
 
         slimePlugin = (SlimePlugin) Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
 
+        saveResource("config.yml", false);
+        config = this.getConfig();
+
         pluginManager.registerEvents(new PlayerListener(), this);
+
+        config.getStringList("commandsToBlock").forEach(str -> {
+            blockedCommands.add(str);
+        });
     }
 }
