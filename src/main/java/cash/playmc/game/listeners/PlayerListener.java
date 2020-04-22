@@ -37,8 +37,10 @@ public class PlayerListener implements Listener {
         if (e.getMessage().startsWith("/")) {
             String[] args = e.getMessage().split(" ");
             if (Minigame.getBlockedCommands().contains(args[0])) {
-                player.sendMessage(ChatColor.RED + "You cannot use this command while in a game.");
-                e.setCancelled(true);
+                if (GameHandler.playerIsPlaying(player)) {
+                    player.sendMessage(ChatColor.RED + "You cannot use this command while in a game.");
+                    e.setCancelled(true);
+                }
             }
         }
     }
