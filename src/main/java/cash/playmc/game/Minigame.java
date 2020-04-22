@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Minigame extends JavaPlugin implements Listener {
@@ -65,6 +66,8 @@ public class Minigame extends JavaPlugin implements Listener {
         config = this.getConfig();
 
         pluginManager.registerEvents(new PlayerListener(), this);
+
+        blockedCommands = new ArrayList<>();
 
         config.getStringList("commandsToBlock").forEach(str -> {
             blockedCommands.add(str);
