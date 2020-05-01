@@ -129,6 +129,11 @@ public class Arena {
 
         PlayerStorageUtil.$().saveInventory(player);
         player.getInventory().clear();
+        player.getInventory().setHelmet(null);
+        player.getInventory().setChestplate(null);
+        player.getInventory().setLeggings(null);
+        player.getInventory().setBoots(null);
+
         player.updateInventory();
 
         ArenaJoinEvent event = new ArenaJoinEvent(this, player);
